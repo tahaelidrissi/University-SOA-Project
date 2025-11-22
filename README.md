@@ -1,7 +1,5 @@
 # 🎓 University Platform SOA
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/tahaidrissi05/university-platform-soa)](https://hub.docker.com/r/tahaidrissi05/university-platform-soa)
-
 Plateforme universitaire en ligne basée sur une architecture orientée services (SOA).
 
 ## 📋 Description
@@ -29,8 +27,6 @@ mvn spring-boot:run
 
 ### Docker
 
-
-
 ```bash
 docker build -t university-platform-soa -f docker/Dockerfile .
 ```
@@ -38,7 +34,7 @@ docker build -t university-platform-soa -f docker/Dockerfile .
 
 ```powershell
 docker run --rm -p 8080:8080 university-platform-soa
-
+```
 - **Utiliser l'image publique**: l'image a été poussée sur Docker Hub sous le tag `tahaidrissi05/university-platform-soa:1.0`. Vous pouvez la récupérer et la lancer directement sans la reconstruire :
 
 ```powershell
