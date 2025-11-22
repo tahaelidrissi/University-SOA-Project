@@ -1,0 +1,17 @@
+target/
+docker/
+docs/
+postman/
+scripts/
+soapui/
+
+.git/
+.gitignore
+README.md
+
+*.iml
+*.log
+*.md
+*.txt
+*.idea/
+.vscode/

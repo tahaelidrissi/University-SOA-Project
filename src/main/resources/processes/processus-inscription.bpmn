@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+             targetNamespace="http://university.com/bpmn"
+             id="definitions">
+
+    <process id="processusInscription" name="Processus d'Inscription à un Cours" isExecutable="true">
+
+        <!-- Événement de démarrage -->
+        <startEvent id="startEvent" name="Demande d'inscription">
+            <outgoing>flow1</outgoing>
+        </startEvent>
+
+        <!-- Tâche 1: Vérifier l'étudiant -->
+        <serviceTask id="verifierEtudiant" name="Vérifier l'étudiant"
+                     camunda:class="com.university.bpmn.VerifierEtudiantTask">
+            <incoming>flow1</incoming>
+            <outgoing>flow2</outgoing>
+        </serviceTask>
+
+        <!-- Passerelle de décision 1: Étudiant valide? -->
+        <exclusiveGateway id="gateway1" name="Étudiant valide?">
+            <incoming>flow2</incoming>
+            <outgoing>flow3</outgoing>
+            <outgoing>flow4</outgoing>
+        </exclusiveGateway>
+
+        <!-- Branche de rejet - Étudiant non valide -->
+        <task id="rejetEtudiant" name="Rejeter: Étudiant non trouvé">
+            <incoming>flow4</incoming>
+            <outgoing>flow5</outgoing>
+        </task>
+
+        <serviceTask id="notifRejet1" name="Notifier le rejet"
+                     camunda:class="com.university.bpmn.NotifierRejetTask">
+            <incoming>flow5</incoming>
+            <outgoing>flow6</outgoing>
+        </serviceTask>
+
+        <endEvent id="endEvent1" name="Fin - Rejet">
+            <incoming>flow6</incoming>
+        </endEvent>
+
+        <!-- Tâche 2: Vérifier le cours -->
+        <serviceTask id="verifierCours" name="Vérifier le cours"
+                     camunda:class="com.university.bpmn.VerifierCoursTask">
+            <incoming>flow3</incoming>
+            <outgoing>flow7</outgoing>
+        </serviceTask>
+
+        <!-- Passerelle de décision 2: Cours disponible? -->
+        <exclusiveGateway id="gateway2" name="Cours disponible?">
+            <incoming>flow7</incoming>
+            <outgoing>flow8</outgoing>
+            <outgoing>flow9</outgoing>
+        </exclusiveGateway>
+
+        <!-- Branche de rejet - Cours non disponible -->
+        <task id="rejetCours" name="Rejeter: Cours indisponible">
+            <incoming>flow9</incoming>
+            <outgoing>flow10</outgoing>
+        </task>
+
+        <serviceTask id="notifRejet2" name="Notifier le rejet"
+                     camunda:class="com.university.bpmn.NotifierRejetTask">
+            <incoming>flow10</incoming>
+            <outgoing>flow11</outgoing>
+        </serviceTask>
+
+        <endEvent id="endEvent2" name="Fin - Rejet">
+            <incoming>flow11</incoming>
+        </endEvent>
+
+        <!-- Tâche 3: Vérifier l'enseignant -->
+        <serviceTask id="verifierEnseignant" name="Vérifier l'enseignant"
+                     camunda:class="com.university.bpmn.VerifierEnseignantTask">
+            <incoming>flow8</incoming>
+            <outgoing>flow12</outgoing>
+        </serviceTask>
+
+        <!-- Passerelle de décision 3: Enseignant disponible? -->
+        <exclusiveGateway id="gateway3" name="Enseignant disponible?">
+            <incoming>flow12</incoming>
+            <outgoing>flow13</outgoing>
+            <outgoing>flow14</outgoing>
+        </exclusiveGateway>
+
+        <!-- Branche de rejet - Enseignant non disponible -->
+        <task id="rejetEnseignant" name="Rejeter: Enseignant non disponible">
+            <incoming>flow14</incoming>
+            <outgoing>flow15</outgoing>
+        </task>
+
+        <serviceTask id="notifRejet3" name="Notifier le rejet"
+                     camunda:class="com.university.bpmn.NotifierRejetTask">
+            <incoming>flow15</incoming>
+            <outgoing>flow16</outgoing>
+        </serviceTask>
+
+        <endEvent id="endEvent3" name="Fin - Rejet">
+            <incoming>flow16</incoming>
+        </endEvent>
+
+        <!-- Tâche 4: Créer l'inscription -->
+        <serviceTask id="creerInscription" name="Créer l'inscription"
+                     camunda:class="com.university.bpmn.CreerInscriptionTask">
+            <incoming>flow13</incoming>
+            <outgoing>flow17</outgoing>
+        </serviceTask>
+
+        <!-- Tâche 5: Incrémenter le nombre d'inscrits -->
+        <serviceTask id="incrementerInscrits" name="Incrémenter nombre d'inscrits"
+                     camunda:class="com.university.bpmn.IncrementerInscritsTask">
+            <incoming>flow17</incoming>
+            <outgoing>flow18</outgoing>
+        </serviceTask>
+
+        <!-- Tâche 6: Envoyer notification de confirmation -->
+        <serviceTask id="envoyerNotification" name="Envoyer notification de confirmation"
+                     camunda:class="com.university.bpmn.EnvoyerNotificationTask">
+            <incoming>flow18</incoming>
+            <outgoing>flow19</outgoing>
+        </serviceTask>
+
+        <!-- Tâche 7: Mettre à jour le suivi académique -->
+        <serviceTask id="majSuivi" name="Mettre à jour le suivi académique"
+                     camunda:class="com.university.bpmn.MajSuiviTask">
+            <incoming>flow19</incoming>
+            <outgoing>flow20</outgoing>
+        </serviceTask>
+
+        <!-- Événement de fin - Succès -->
+        <endEvent id="endEvent4" name="Fin - Succès">
+            <incoming>flow20</incoming>
+        </endEvent>
+
+        <!-- Flux de séquence -->
+        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="verifierEtudiant"/>
+        <sequenceFlow id="flow2" sourceRef="verifierEtudiant" targetRef="gateway1"/>
+        <sequenceFlow id="flow3" name="Oui" sourceRef="gateway1" targetRef="verifierCours">
+            <conditionExpression xsi:type="tFormalExpression">${etudiantValide == true}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow4" name="Non" sourceRef="gateway1" targetRef="rejetEtudiant">
+            <conditionExpression xsi:type="tFormalExpression">${etudiantValide == false}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow5" sourceRef="rejetEtudiant" targetRef="notifRejet1"/>
+        <sequenceFlow id="flow6" sourceRef="notifRejet1" targetRef="endEvent1"/>
+        <sequenceFlow id="flow7" sourceRef="verifierCours" targetRef="gateway2"/>
+        <sequenceFlow id="flow8" name="Oui" sourceRef="gateway2" targetRef="verifierEnseignant">
+            <conditionExpression xsi:type="tFormalExpression">${coursDisponible == true}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow9" name="Non" sourceRef="gateway2" targetRef="rejetCours">
+            <conditionExpression xsi:type="tFormalExpression">${coursDisponible == false}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow10" sourceRef="rejetCours" targetRef="notifRejet2"/>
+        <sequenceFlow id="flow11" sourceRef="notifRejet2" targetRef="endEvent2"/>
+        <sequenceFlow id="flow12" sourceRef="verifierEnseignant" targetRef="gateway3"/>
+        <sequenceFlow id="flow13" name="Oui" sourceRef="gateway3" targetRef="creerInscription">
+            <conditionExpression xsi:type="tFormalExpression">${enseignantDisponible == true}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow14" name="Non" sourceRef="gateway3" targetRef="rejetEnseignant">
+            <conditionExpression xsi:type="tFormalExpression">${enseignantDisponible == false}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow15" sourceRef="rejetEnseignant" targetRef="notifRejet3"/>
+        <sequenceFlow id="flow16" sourceRef="notifRejet3" targetRef="endEvent3"/>
+        <sequenceFlow id="flow17" sourceRef="creerInscription" targetRef="incrementerInscrits"/>
+        <sequenceFlow id="flow18" sourceRef="incrementerInscrits" targetRef="envoyerNotification"/>
+        <sequenceFlow id="flow19" sourceRef="envoyerNotification" targetRef="majSuivi"/>
+        <sequenceFlow id="flow20" sourceRef="majSuivi" targetRef="endEvent4"/>
+
+    </process>
+
+</definitions>

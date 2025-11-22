@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme Universitaire - Interface de Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content-panel {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .response-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        pre {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🎓 Plateforme Universitaire</h1>
+        <p class="subtitle">Interface de test - Architecture SOA</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('students')">Étudiants (SOAP)</button>
+        <button class="tab" onclick="showTab('teachers')">Enseignants (SOAP)</button>
+        <button class="tab" onclick="showTab('courses')">Cours (SOAP)</button>
+        <button class="tab" onclick="showTab('inscriptions')">Inscriptions (REST)</button>
+        <button class="tab" onclick="showTab('notifications')">Notifications (REST)</button>
+        <button class="tab" onclick="showTab('suivi')">Suivi Académique (REST)</button>
+    </div>
+
+    <!-- Étudiants -->
+    <div id="students" class="content-panel active">
+        <h2>Gestion des Étudiants (Service SOAP)</h2>
+        <div class="info-box">
+            <strong>Endpoint SOAP:</strong> http://localhost:8080/services/EtudiantService
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Créer un étudiant</h3>
+                <div class="form-group">
+                    <label>Nom:</label>
+                    <input type="text" id="etud-nom" placeholder="Nom" value="Alami">
+                </div>
+                <div class="form-group">
+                    <label>Prénom:</label>
+                    <input type="text" id="etud-prenom" placeholder="Prénom" value="Ahmed">
+                </div>
+                <div class="form-group">
+                    <label>Matricule:</label>
+                    <input type="text" id="etud-matricule" placeholder="E12345" value="E12345">
+                </div>
+                <div class="form-group">
+                    <label>Filière:</label>
+                    <input type="text" id="etud-filiere" placeholder="Informatique" value="AMOA">
+                </div>
+                <div class="form-group">
+                    <label>Année:</label>
+                    <input type="number" id="etud-annee" placeholder="2025" value="2025">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="etud-email" placeholder="email@example.com" value="ahmed.alami@university.ma">
+                </div>
+                <button onclick="createStudent()">Créer l'étudiant</button>
+            </div>
+
+            <div class="card">
+                <h3>Consulter un étudiant</h3>
+                <div class="form-group">
+                    <label>Matricule:</label>
+                    <input type="text" id="get-etud-matricule" placeholder="E12345" value="E12345">
+                </div>
+                <button onclick="getStudent()">Consulter</button>
+            </div>
+        </div>
+
+        <div id="student-result" class="response-container"></div>
+    </div>
+
+    <!-- Enseignants -->
+    <div id="teachers" class="content-panel">
+        <h2>Gestion des Enseignants (Service SOAP)</h2>
+        <div class="info-box">
+            <strong>Endpoint SOAP:</strong> http://localhost:8080/services/EnseignantService
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Ajouter un enseignant</h3>
+                <div class="form-group">
+                    <label>Nom:</label>
+                    <input type="text" id="prof-nom" placeholder="Nom" value="Bennani">
+                </div>
+                <div class="form-group">
+                    <label>Prénom:</label>
+                    <input type="text" id="prof-prenom" placeholder="Prénom" value="Mohamed">
+                </div>
+                <div class="form-group">
+                    <label>Spécialité:</label>
+                    <input type="text" id="prof-specialite" placeholder="Spécialité" value="Architecture Logicielle">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="prof-email" placeholder="email@example.com" value="m.bennani@university.ma">
+                </div>
+                <button onclick="createTeacher()">Ajouter l'enseignant</button>
+            </div>
+        </div>
+
+        <div id="teacher-result" class="response-container"></div>
+    </div>
+
+    <!-- Cours -->
+    <div id="courses" class="content-panel">
+        <h2>Gestion des Cours (Service SOAP)</h2>
+        <div class="info-box">
+            <strong>Endpoint SOAP:</strong> http://localhost:8080/services/CoursService
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Créer un cours</h3>
+                <div class="form-group">
+                    <label>Titre:</label>
+                    <input type="text" id="cours-titre" placeholder="Titre du cours" value="Architecture SOA">
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea id="cours-desc" rows="3" placeholder="Description">Introduction aux architectures orientées services</textarea>
+                </div>
+                <div class="form-group">
+                    <label>ID Enseignant:</label>
+                    <input type="number" id="cours-enseignant" placeholder="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Crédits:</label>
+                    <input type="number" id="cours-credits" placeholder="6" value="6">
+                </div>
+                <div class="form-group">
+                    <label>Horaires:</label>
+                    <input type="text" id="cours-horaires" placeholder="Lundi 8h-10h" value="Lundi 8h-10h, Mercredi 14h-16h">
+                </div>
+                <div class="form-group">
+                    <label>Capacité maximale:</label>
+                    <input type="number" id="cours-capacite" placeholder="30" value="30">
+                </div>
+                <button onclick="createCourse()">Créer le cours</button>
+            </div>
+        </div>
+
+        <div id="course-result" class="response-container"></div>
+    </div>
+
+    <!-- Inscriptions -->
+    <div id="inscriptions" class="content-panel">
+        <h2>Gestion des Inscriptions (Service REST)</h2>
+        <div class="info-box">
+            <strong>Endpoint REST:</strong> http://localhost:8080/api/inscriptions
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>S'inscrire à un cours</h3>
+                <div class="form-group">
+                    <label>Matricule étudiant:</label>
+                    <input type="text" id="insc-matricule" placeholder="E12345" value="E12345">
+                </div>
+                <div class="form-group">
+                    <label>ID Cours:</label>
+                    <input type="number" id="insc-cours" placeholder="1" value="1">
+                </div>
+                <button onclick="createInscription()">S'inscrire</button>
+            </div>
+
+            <div class="card">
+                <h3>Consulter mes inscriptions</h3>
+                <div class="form-group">
+                    <label>Matricule:</label>
+                    <input type="text" id="list-insc-matricule" placeholder="E12345" value="E12345">
+                </div>
+                <button onclick="listInscriptions()">Consulter</button>
+            </div>
+        </div>
+
+        <div id="inscription-result" class="response-container"></div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications" class="content-panel">
+        <h2>Service de Notification (REST)</h2>
+        <div class="info-box">
+            <strong>Endpoint REST:</strong> http://localhost:8080/api/notifications
+        </div>
+
+        <div class="card">
+            <h3>Envoyer un email</h3>
+            <div class="form-group">
+                <label>Destinataire:</label>
+                <input type="email" id="notif-email" placeholder="email@example.com" value="ahmed.alami@university.ma">
+            </div>
+            <div class="form-group">
+                <label>Sujet:</label>
+                <input type="text" id="notif-sujet" placeholder="Sujet" value="Test de notification">
+            </div>
+            <div class="form-group">
+                <label>Message:</label>
+                <textarea id="notif-message" rows="4" placeholder="Votre message">Ceci est un message de test pour vérifier le service de notification.</textarea>
+            </div>
+            <button onclick="sendNotification()">Envoyer</button>
+        </div>
+
+        <div id="notification-result" class="response-container"></div>
+    </div>
+
+    <!-- Suivi Académique -->
+    <div id="suivi" class="content-panel">
+        <h2>Suivi Académique (Service REST)</h2>
+        <div class="info-box">
+            <strong>Endpoint REST:</strong> http://localhost:8080/api/suivi
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Consulter mon suivi</h3>
+                <div class="form-group">
+                    <label>Matricule:</label>
+                    <input type="text" id="suivi-matricule" placeholder="E12345" value="E12345">
+                </div>
+                <button onclick="getSuivi()">Consulter</button>
+            </div>
+
+            <div class="card">
+                <h3>Mes notes</h3>
+                <div class="form-group">
+                    <label>Matricule:</label>
+                    <input type="text" id="notes-matricule" placeholder="E12345" value="E12345">
+                </div>
+                <button onclick="getNotes()">Consulter les notes</button>
+            </div>
+        </div>
+
+        <div id="suivi-result" class="response-container"></div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8080';
+
+    function showTab(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+
+        event.target.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+    }
+
+    function showResult(containerId, data, isError = false) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        container.style.display = 'block';
+    }
+
+    // Fonctions pour les étudiants
+    async function createStudent() {
+        const data = {
+            nom: document.getElementById('etud-nom').value,
+            prenom: document.getElementById('etud-prenom').value,
+            matricule: document.getElementById('etud-matricule').value,
+            filiere: document.getElementById('etud-filiere').value,
+            annee: parseInt(document.getElementById('etud-annee').value),
+            email: document.getElementById('etud-email').value
+        };
+
+        showResult('student-result', { status: 'Simulation: Appel SOAP pour créer l\'étudiant', data });
+    }
+
+    async function getStudent() {
+        const matricule = document.getElementById('get-etud-matricule').value;
+        showResult('student-result', {
+            status: 'Simulation: Appel SOAP getEtudiant',
+            matricule,
+            note: 'Utilisez SoapUI pour tester le service SOAP réel'
+        });
+    }
+
+    // Fonctions pour les enseignants
+    async function createTeacher() {
+        const data = {
+            nom: document.getElementById('prof-nom').value,
+            prenom: document.getElementById('prof-prenom').value,
+            specialite: document.getElementById('prof-specialite').value,
+            email: document.getElementById('prof-email').value
+        };
+        showResult('teacher-result', { status: 'Simulation: Appel SOAP pour créer l\'enseignant', data });
+    }
+
+    // Fonctions pour les cours
+    async function createCourse() {
+        const data = {
+            titre: document.getElementById('cours-titre').value,
+            description: document.getElementById('cours-desc').value,
+            enseignantId: parseInt(document.getElementById('cours-enseignant').value),
+            credits: parseInt(document.getElementById('cours-credits').value),
+            horaires: document.getElementById('cours-horaires').value,
+            capaciteMax: parseInt(document.getElementById('cours-capacite').value)
+        };
+        showResult('course-result', { status: 'Simulation: Appel SOAP pour créer le cours', data });
+    }
+
+    // Fonctions REST
+    async function createInscription() {
+        const data = {
+            matriculeEtudiant: document.getElementById('insc-matricule').value,
+            coursId: parseInt(document.getElementById('insc-cours').value)
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/api/inscriptions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            showResult('inscription-result', result);
+        } catch (error) {
+            showResult('inscription-result', {
+                error: 'Serveur non disponible. Démarrez l\'application Spring Boot.',
+                simulation: data
+            }, true);
+        }
+    }
+
+    async function listInscriptions() {
+        const matricule = document.getElementById('list-insc-matricule').value;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/inscriptions/etudiant/${matricule}`);
+            const result = await response.json();
+            showResult('inscription-result', result);
+        } catch (error) {
+            showResult('inscription-result', {
+                error: 'Serveur non disponible',
+                simulation: { matricule }
+            }, true);
+        }
+    }
+
+    async function sendNotification() {
+        const data = {
+            destinataire: document.getElementById('notif-email').value,
+            sujet: document.getElementById('notif-sujet').value,
+            message: document.getElementById('notif-message').value
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/api/notifications/email`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            showResult('notification-result', result);
+        } catch (error) {
+            showResult('notification-result', {
+                error: 'Serveur non disponible',
+                simulation: data
+            }, true);
+        }
+    }
+
+    async function getSuivi() {
+        const matricule = document.getElementById('suivi-matricule').value;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/suivi/${matricule}`);
+            const result = await response.json();
+            showResult('suivi-result', result);
+        } catch (error) {
+            showResult('suivi-result', {
+                error: 'Serveur non disponible',
+                simulation: { matricule }
+            }, true);
+        }
+    }
+
+    async function getNotes() {
+        const matricule = document.getElementById('notes-matricule').value;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/suivi/${matricule}/notes`);
+            const result = await response.json();
+            showResult('suivi-result', result);
+        } catch (error) {
+            showResult('suivi-result', {
+                error: 'Serveur non disponible',
+                simulation: { matricule }
+            }, true);
+        }
+    }
+</script>
+</body>
+</html>
