@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @WebService(
         serviceName = "CoursService",
         portName = "CoursPort",
+        targetNamespace = "http://soap.university.com/",
         endpointInterface = "com.university.soap.CoursService"
 )
 public class CoursServiceImpl implements CoursService {
