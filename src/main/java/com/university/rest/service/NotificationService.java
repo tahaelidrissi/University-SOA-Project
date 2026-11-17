@@ -48,7 +48,7 @@ public class NotificationService {
 
     public List<Notification> getHistorique(String userId) {
         return notifications.values().stream()
-                .filter(n -> n.getDestinataire().contains(userId))
+                .filter(n -> n.getDestinataire() != null && n.getDestinataire().contains(userId))
                 .collect(Collectors.toList());
     }
 }
