@@ -17,6 +17,7 @@ Plateforme universitaire construite selon une **architecture orientée services 
 - [Services REST](#-services-rest)
 - [Processus BPMN d'inscription](#-processus-bpmn-dinscription)
 - [Scénario de test complet](#-scénario-de-test-complet)
+- [Tests](#-tests)
 - [Limites connues](#-limites-connues)
 - [Licence](#-licence)
 
@@ -335,13 +336,29 @@ curl -X POST http://localhost:8080/services/EnseignantService \
 
 ---
 
+## ✅ Tests
+
+```bash
+mvn test
+```
+
+| Classe de test | Couverture |
+|---|---|
+| `EtudiantServiceImplTest`, `EnseignantServiceImplTest`, `CoursServiceImplTest` | Services SOAP : CRUD, doublons, disponibilité, capacité des cours |
+| `RestServicesTest` | Services REST : inscriptions, suivi académique (moyenne, crédits, attestations), notifications |
+| `InscriptionControllerTest` | Contrôleur REST (`@WebMvcTest`) : codes HTTP, démarrage du processus Camunda |
+| `ProcessusInscriptionTest` | Test de bout en bout du processus BPMN : inscription acceptée et les 3 cas de rejet |
+
+> `ProcessusInscriptionTest` démarre l'application sur le port **8080** (les JavaDelegates appellent `http://localhost:8080`) : le port doit être libre pendant les tests.
+
+---
+
 ## ⚠️ Limites connues
 
 - **Stockage en mémoire** (`ConcurrentHashMap`) : aucune persistance des données métier ; H2 sert uniquement au moteur Camunda.
 - **URLs codées en dur** (`http://localhost:8080`) dans les JavaDelegates : l'application doit tourner sur le port 8080.
 - **Notifications simulées** : aucun e-mail ni SMS réel n'est envoyé.
 - **Pas d'authentification** sur les API SOAP/REST et CORS ouvert (`*`) — usage pédagogique uniquement.
-- **Pas de tests automatisés** pour l'instant.
 
 ---
 
