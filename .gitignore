@@ -31,3 +31,11 @@ pom.xml.releaseBackup
 
 # H2 Database
 *.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environnement local
+.env
+*.env
